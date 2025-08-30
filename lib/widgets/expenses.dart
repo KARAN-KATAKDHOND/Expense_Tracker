@@ -1,9 +1,8 @@
 import 'package:expense_tracker/models/expense_model.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
-import 'package:expense_tracker/models/expense_model.dart';
 import 'package:expense_tracker/widgets/expenses_list/expense_item_widget.dart';
-
+import 'package:expense_tracker/widgets/add_expense_Widget.dart';
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
 
@@ -40,33 +39,44 @@ class _ExpenseState extends State<Expenses> {
       category: Category.food,
     ),
   ];
-
-void _openAddExpenseOverlay(){
-  showModalBottomSheet(context: context, builder: builder))
+//
+  void _openAddExpenseOverlay() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => NewExpense(onAddExpense: _addExpense,),
+    );
+  }
+void _addExpense(Expense expense){
+  setState(() {
+    _registeredExpenses.add(expense);
+  });
 }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blueGrey,
-          
-          title: Center(child: Text('Expense Tracker',textAlign: TextAlign.center,)),
+          backgroundColor: Color(0xFF2ECC71),
+
+          // Colors.blueGrey,
+          title: Center(
+            child: Text('Expense Tracker', textAlign: TextAlign.center),
+          ),
           actions: [
             IconButton(
-            onPressed: () {},
-             icon: const Icon(Icons.add)),
+              onPressed: _openAddExpenseOverlay,
+              icon: const Icon(Icons.add),
+            ),
           ],
         ),
         body: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                const Color.fromARGB(255, 34, 155, 254),
-                const Color.fromARGB(255, 110, 161, 249),
+                // const Color.fromARGB(255, 34, 155, 254),
+                // const Color.fromARGB(255, 110, 161, 249),
+                Color(0xFF121212),
+                Color(0xFF121212),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -83,7 +93,6 @@ void _openAddExpenseOverlay(){
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
