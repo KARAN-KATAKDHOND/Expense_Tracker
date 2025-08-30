@@ -14,34 +14,35 @@ class Expenses extends StatefulWidget {
 
 class _ExpenseState extends State<Expenses> {
   final List<Expense> _registeredExpenses = [
-    Expense(
-      amount: 19.99,
-      title: 'Flutter Course',
-      date: DateTime.now(),
-      category: Category.work,
-    ),
-    Expense(
-      amount: 22.22,
-      title: 'Mangrove Cleaning Auto Fare',
-      date: DateTime.now(),
-      category: Category.travel,
-    ),
-    Expense(
-      amount: 349.00,
-      title: 'JetBrains Student License',
-      date: DateTime.now(),
-      category: Category.work,
-    ),
-    Expense(
-      amount: 85.50,
-      title: 'Tea & Sandwich Meetup with Juniors',
-      date: DateTime.now(),
-      category: Category.food,
-    ),
+    // Expense(
+    //   amount: 19.99,
+    //   title: 'Flutter Course',
+    //   date: DateTime.now(),
+    //   category: Category.work,
+    // ),
+    // Expense(
+    //   amount: 22.22,
+    //   title: 'Mangrove Cleaning Auto Fare',
+    //   date: DateTime.now(),
+    //   category: Category.travel,
+    // ),
+    // Expense(
+    //   amount: 349.00,
+    //   title: 'JetBrains Student License',
+    //   date: DateTime.now(),
+    //   category: Category.work,
+    // ),
+    // Expense(
+    //   amount: 85.50,
+    //   title: 'Tea & Sandwich Meetup with Juniors',
+    //   date: DateTime.now(),
+    //   category: Category.food,
+    // ),
   ];
 //
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (ctx) => NewExpense(onAddExpense: _addExpense,),
     );
@@ -52,8 +53,43 @@ void _addExpense(Expense expense){
   });
 }
 
+void _removeExpense(Expense expense){
+//done to find index of deleted expense for recovery purpose
+final expenseIndex = _registeredExpenses.indexOf(expense);
+
+  setState(() {
+    _registeredExpenses.remove(expense);
+  });
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      duration: const Duration(seconds: 2),
+      content: Text('$expense.title deleted'),
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: (){
+          setState(() {
+            _registeredExpenses.insert(expenseIndex,expense);
+          });
+        },
+      )
+      ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
+
+Widget mainContent = const Center(
+  child: Text(
+    'No Expenses Found!! , Start adding some!',
+    style: TextStyle(
+      color: Colors.green,
+    ),
+    ),);
+
+  if(_registeredExpenses.isNotEmpty){
+    mainContent = ExpensesList(expenses: _registeredExpenses,onRemoveExpense: _removeExpense,);
+  }
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFF2ECC71),
@@ -89,7 +125,7 @@ void _addExpense(Expense expense){
             children: [
               //Toolbar with the add button => Row()
               Text('The Chart'),
-              Expanded(child: ExpensesList(expenses: _registeredExpenses)),
+              Expanded(child: mainContent),
             ],
           ),
         ),
