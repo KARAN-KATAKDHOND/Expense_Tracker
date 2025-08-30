@@ -14,30 +14,30 @@ class Expenses extends StatefulWidget {
 
 class _ExpenseState extends State<Expenses> {
   final List<Expense> _registeredExpenses = [
-    // Expense(
-    //   amount: 19.99,
-    //   title: 'Flutter Course',
-    //   date: DateTime.now(),
-    //   category: Category.work,
-    // ),
-    // Expense(
-    //   amount: 22.22,
-    //   title: 'Mangrove Cleaning Auto Fare',
-    //   date: DateTime.now(),
-    //   category: Category.travel,
-    // ),
-    // Expense(
-    //   amount: 349.00,
-    //   title: 'JetBrains Student License',
-    //   date: DateTime.now(),
-    //   category: Category.work,
-    // ),
-    // Expense(
-    //   amount: 85.50,
-    //   title: 'Tea & Sandwich Meetup with Juniors',
-    //   date: DateTime.now(),
-    //   category: Category.food,
-    // ),
+    Expense(
+      amount: 19.99,
+      title: 'Flutter Course',
+      date: DateTime.now(),
+      category: Category.work,
+    ),
+    Expense(
+      amount: 22.22,
+      title: 'Mangrove Cleaning Auto Fare',
+      date: DateTime.now(),
+      category: Category.travel,
+    ),
+    Expense(
+      amount: 349.00,
+      title: 'JetBrains Student License',
+      date: DateTime.now(),
+      category: Category.work,
+    ),
+    Expense(
+      amount: 85.50,
+      title: 'Tea & Sandwich Meetup with Juniors',
+      date: DateTime.now(),
+      category: Category.food,
+    ),
   ];
 //
   void _openAddExpenseOverlay() {
@@ -60,10 +60,11 @@ final expenseIndex = _registeredExpenses.indexOf(expense);
   setState(() {
     _registeredExpenses.remove(expense);
   });
+  ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      duration: const Duration(seconds: 2),
-      content: Text('$expense.title deleted'),
+      duration: const Duration(seconds: 4),
+      content: Text('${expense.title} {₹ ${expense.amount} } deleted'),
       action: SnackBarAction(
         label: 'Undo',
         onPressed: (){
