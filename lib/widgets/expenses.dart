@@ -1,8 +1,12 @@
 import 'package:expense_tracker/models/expense_model.dart';
+import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
 import 'package:expense_tracker/widgets/expenses_list/expense_item_widget.dart';
 import 'package:expense_tracker/widgets/add_expense_Widget.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:expense_tracker/widgets/expenses_list/wallet.dart';
+var sum = 0.00;
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
 
@@ -14,35 +18,36 @@ class Expenses extends StatefulWidget {
 
 class _ExpenseState extends State<Expenses> {
   final List<Expense> _registeredExpenses = [
-    Expense(
-      amount: 19.99,
-      title: 'Flutter Course',
-      date: DateTime.now(),
-      category: Category.work,
-    ),
-    Expense(
-      amount: 22.22,
-      title: 'Mangrove Cleaning Auto Fare',
-      date: DateTime.now(),
-      category: Category.travel,
-    ),
-    Expense(
-      amount: 349.00,
-      title: 'JetBrains Student License',
-      date: DateTime.now(),
-      category: Category.work,
-    ),
-    Expense(
-      amount: 85.50,
-      title: 'Tea & Sandwich Meetup with Juniors',
-      date: DateTime.now(),
-      category: Category.food,
-    ),
+    // Expense(
+    //   amount: 19.99,
+    //   title: 'Flutter Course',
+    //   date: DateTime.now(),
+    //   category: Category.work,
+    // ),
+    // Expense(
+    //   amount: 22.22,
+    //   title: 'Mangrove Cleaning Auto Fare',
+    //   date: DateTime.now(),
+    //   category: Category.travel,
+    // ),
+    // Expense(
+    //   amount: 349.00,
+    //   title: 'JetBrains Student License',
+    //   date: DateTime.now(),
+    //   category: Category.work,
+    // ),
+    // Expense(
+    //   amount: 85.50,
+    //   title: 'Tea & Sandwich Meetup with Juniors',
+    //   date: DateTime.now(),
+    //   category: Category.food,
+    // ),
   ];
 //
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
       isScrollControlled: true,
+      
       context: context,
       builder: (ctx) => NewExpense(onAddExpense: _addExpense,),
     );
@@ -50,6 +55,11 @@ class _ExpenseState extends State<Expenses> {
 void _addExpense(Expense expense){
   setState(() {
     _registeredExpenses.add(expense);
+    // _registeredExpenses.forEach((expense){
+    //   sum+= expense.amount;
+    // });
+    sum+=expense.amount;
+    sum = (sum * 100).round() / 100;
   });
 }
 
@@ -59,6 +69,8 @@ final expenseIndex = _registeredExpenses.indexOf(expense);
 
   setState(() {
     _registeredExpenses.remove(expense);
+    sum = sum - expense.amount;
+    sum = (sum * 100).round() / 100;
   });
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
@@ -70,6 +82,7 @@ final expenseIndex = _registeredExpenses.indexOf(expense);
         onPressed: (){
           setState(() {
             _registeredExpenses.insert(expenseIndex,expense);
+            sum += expense.amount;
           });
         },
       )
@@ -97,12 +110,20 @@ Widget mainContent = const Center(
 
           // Colors.blueGrey,
           title: Center(
-            child: Text('Expense Tracker', textAlign: TextAlign.center),
+            child: Text('Expense Tracker',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.anton(
+              color: Colors.white,
+              fontSize: 30,
+              
+            ),
+            ),
           ),
           actions: [
             IconButton(
               onPressed: _openAddExpenseOverlay,
               icon: const Icon(Icons.add),
+              color: Colors.white,
             ),
           ],
         ),
@@ -112,8 +133,15 @@ Widget mainContent = const Center(
               colors: [
                 // const Color.fromARGB(255, 34, 155, 254),
                 // const Color.fromARGB(255, 110, 161, 249),
-                Color(0xFF121212),
-                Color(0xFF121212),
+                // Color(0xFF121212),
+                // Color(0xFF121212),
+                //charcoal fade
+                Color(0xFF434343), // Dark Charcoal
+              Color(0xFF000000)
+              //midnight blue
+              // Color(0xFF0f2027), // Dark Slate Blue
+              // Color(0xFF203a43), // Medium Dark Blue
+              // Color(0xFF2c5364), 
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -124,8 +152,10 @@ Widget mainContent = const Center(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
+              Wallet(sum: sum,),
               //Toolbar with the add button => Row()
-              Text('The Chart'),
+              Chart(expenses: _registeredExpenses),
+              // Text('The Chart'),
               Expanded(child: mainContent),
             ],
           ),

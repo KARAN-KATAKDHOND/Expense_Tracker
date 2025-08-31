@@ -37,6 +37,7 @@ class _NewExpense extends State<NewExpense> {
     });
   }
 
+  @override
   void dispose() {
     _titleController.dispose();
     _amountController.dispose();
@@ -44,15 +45,14 @@ class _NewExpense extends State<NewExpense> {
   }
   // var _enteredTitle = '';
   // void _saveTitleInput(String inputValue){
-  //   _enteredTitle = inputValue;
+  //   _enteredTitle = inputValue;
   // }
 
   //onSubmit
   void _submitExpenseData() {
     final enteredAmount = double.tryParse(_amountController.text);
-    final amountIsInvalid = (enteredAmount == null || enteredAmount < 0)
-        ? true
-        : false;
+    final amountIsInvalid = (enteredAmount == null || enteredAmount < 0);
+
     if ((_titleController.text.trim().isEmpty ||
         amountIsInvalid ||
         _selectedDate == null)) {
@@ -91,30 +91,33 @@ class _NewExpense extends State<NewExpense> {
   @override
   Widget build(context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(16,48,16,16),
+      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
       child: Column(
         children: [
           TextField(
             controller: _titleController,
             maxLength: 50,
-            decoration: InputDecoration(label: Text('Title')),
+            decoration: const InputDecoration(
+              label: Text('Title'),
+            ),
           ),
-          SizedBox(height: 20),
-          //Amount TextField
+          const SizedBox(height: 20),
+          //Amount TextField and Date Picker Row
           Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _amountController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration: InputDecoration(
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: const InputDecoration(
                     prefixText: '₹ ',
                     label: Text('Amount'),
-                  ), //sets prefix ₹
-                  // inputFormatters: <TextInputFormatter>[
-                  //   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.>\d{0,2}')),
-                  // ],
-                ),
+                  ),
+                ), //sets prefix ₹
+                // inputFormatters: <TextInputFormatter>[
+                //   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.>\d{0,2}')),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -161,15 +164,16 @@ class _NewExpense extends State<NewExpense> {
               const Spacer(),
               ElevatedButton(
                 onPressed: _submitExpenseData,
-                child: Text('Save Expense'),
+                child: const Text('Save Expense'),
               ),
-
               TextButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                label: Text('Cancel'),
-                icon: Icon(Icons.cancel),
+                label: const Text(
+                  'Cancel',
+                ),
+                icon: const Icon(Icons.cancel, color: Colors.white),
               ),
             ],
           ),
