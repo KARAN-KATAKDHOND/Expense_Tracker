@@ -53,6 +53,6 @@ class ExpenseBucket {
       catsum += expense.amount;
     } return catsum;
 
-    return catsum;
+    
   }
 }
