@@ -7,7 +7,7 @@ A modern, responsive, and aesthetically pleasing Expense Tracker application bui
 
 | Dashboard & Wallet | Add Expense & List |
 |:---:|:---:|
-| <img src="../expense_tracker/lib/assets/screenshots/dashboard.jpg" alt="Dashboard" width="300"/> | <img src="../expense_tracker/lib/assets/screenshots/add_Expense.jpg" alt="Add Expense" width="300"/> |
+| <img src="lib/assets/screenshots/dashboard.jpg" alt="Dashboard" width="300"/> | <img src="lib/assets/screenshots/add_Expense.jpg" alt="Add Expense" width="300"/> |
 | *View total balance and charts* | *Easy input and organized lists* |
 
 
