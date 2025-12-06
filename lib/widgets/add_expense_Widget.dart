@@ -1,20 +1,23 @@
+import 'package:expense_tracker/providers/expense_provider.dart';
 import 'package:flutter/cupertino.dart';//ios styling language
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:expense_tracker/models/expense_model.dart';
 import 'dart:io';
-class NewExpense extends StatefulWidget {
-  const NewExpense({super.key, required this.onAddExpense});
 
-  final void Function(Expense expense) onAddExpense;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+class NewExpense extends ConsumerStatefulWidget {
+  const NewExpense({super.key,});
+
+
 
   @override
-  State<NewExpense> createState() {
+  ConsumerState<NewExpense> createState() {
     return _NewExpense();
   }
 }
 
-class _NewExpense extends State<NewExpense> {
+class _NewExpense extends ConsumerState<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
@@ -101,15 +104,15 @@ else{
           _showDialog();
       return;
     }
-    //.....
-    widget.onAddExpense(
-      Expense(
-        amount: enteredAmount,
-        title: _titleController.text,
-        date: _selectedDate!,
-        category: _selectedCategory,
-      ),
-    );
+    
+  ref.watch(expensesProvider.notifier).onaddExpense(
+   Expense(
+            amount: enteredAmount,
+            title: _titleController.text,
+            date: _selectedDate!,
+            category: _selectedCategory,
+          ),
+ );
     Navigator.pop(context);
   }
 

@@ -1,20 +1,13 @@
+import 'package:expense_tracker/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Wallet extends StatefulWidget {
-  // CORRECTED: Added the 'double' type to the 'sum' variable.
-  const Wallet({super.key, required this.sum});
-  final double sum;
+class Wallet extends ConsumerWidget {
+  const Wallet({super.key,});
 
   @override
-  State<Wallet> createState() {
-    return _WalletState();
-  }
-}
-
-// CORRECTED: Used 'extends' instead of 'return' for the class definition.
-class _WalletState extends State<Wallet> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final sum = ref.watch(totalExpenseProvider);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       // 1. A deep, matte grey instead of pure black
@@ -52,7 +45,7 @@ class _WalletState extends State<Wallet> {
                     ),
                   ),
                   TextSpan(
-                    text: widget.sum.toString(), // The amount
+                    text: sum.toString(), // The amount
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 38,

@@ -1,4 +1,5 @@
 import 'package:expense_tracker/models/expense_model.dart';
+import 'package:expense_tracker/providers/expense_provider.dart';
 import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
@@ -6,74 +7,36 @@ import 'package:expense_tracker/widgets/expenses_list/expense_item_widget.dart';
 import 'package:expense_tracker/widgets/add_expense_Widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:expense_tracker/widgets/expenses_list/wallet.dart';
-var sum = 0.00;
-class Expenses extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+class Expenses extends ConsumerStatefulWidget {
   const Expenses({super.key});
 
   @override
-  State<Expenses> createState() {
+  ConsumerState<Expenses> createState() {
     return _ExpenseState();
   }
 }
 
-class _ExpenseState extends State<Expenses> {
+class _ExpenseState extends ConsumerState<Expenses> {
 
-//PREDEFINED LIST TO ADD EXPENSE  
-  final List<Expense> _registeredExpenses = [
-    // Expense(
-    //   amount: 19.99,
-    //   title: 'Flutter Course',
-    //   date: DateTime.now(),
-    //   category: Category.work,
-    // ),
-    // Expense(
-    //   amount: 22.22,
-    //   title: 'Mangrove Cleaning Auto Fare',
-    //   date: DateTime.now(),
-    //   category: Category.travel,
-    // ),
-    // Expense(
-    //   amount: 349.00,
-    //   title: 'JetBrains Student License',
-    //   date: DateTime.now(),
-    //   category: Category.work,
-    // ),
-    // Expense(
-    //   amount: 85.50,
-    //   title: 'Tea & Sandwich Meetup with Juniors',
-    //   date: DateTime.now(),
-    //   category: Category.food,
-    // ),
-  ];
 //
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
       isScrollControlled: true,
       useSafeArea: true,
       context: context,
-      builder: (ctx) => NewExpense(onAddExpense: _addExpense,),
+      builder: (ctx) => NewExpense(),
     );
   }
-void _addExpense(Expense expense){
-  setState(() {
-    _registeredExpenses.add(expense);
-    // _registeredExpenses.forEach((expense){
-    //   sum+= expense.amount;
-    // });
-    sum+=expense.amount;
-    sum = (sum * 100).round() / 100;
-  });
-}
+
 
 void _removeExpense(Expense expense){
 //done to find index of deleted expense for recovery purpose
-final expenseIndex = _registeredExpenses.indexOf(expense);
+final expenseIndex = ref.read(expensesProvider).indexOf(expense);
 
-  setState(() {
-    _registeredExpenses.remove(expense);
-    sum = sum - expense.amount;
-    sum = (sum * 100).round() / 100;
-  });
+  
+    ref.read(expensesProvider.notifier).onRemoveExpense(expense);
+ 
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -82,10 +45,8 @@ final expenseIndex = _registeredExpenses.indexOf(expense);
       action: SnackBarAction(
         label: 'Undo',
         onPressed: (){
-          setState(() {
-            _registeredExpenses.insert(expenseIndex,expense);
-            sum += expense.amount;
-          });
+          ref.read(expensesProvider.notifier).insertExpense(expenseIndex, expense);
+
         },
       )
       ),
@@ -96,6 +57,10 @@ final expenseIndex = _registeredExpenses.indexOf(expense);
   Widget build(BuildContext context) {
 final width = MediaQuery.of(context).size.width;
 // print(MediaQuery.of(context).size.height);
+
+
+final expenses = ref.watch(expensesProvider);
+final sum  = ref.watch(totalExpenseProvider);
 Widget mainContent = const Center(
   child: Text(
     'No Expenses Found!! , Start adding some!',
@@ -104,8 +69,8 @@ Widget mainContent = const Center(
     ),
     ),);
 
-  if(_registeredExpenses.isNotEmpty){
-    mainContent = ExpensesList(expenses: _registeredExpenses,onRemoveExpense: _removeExpense,);
+  if(expenses.isNotEmpty){
+    mainContent = ExpensesList(expenses: expenses,onRemoveExpense: _removeExpense,);
   }
     return Scaffold(
         appBar: AppBar(
@@ -155,9 +120,9 @@ Widget mainContent = const Center(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Wallet(sum: sum,),
+              Wallet(),
               //Toolbar with the add button => Row()
-              Chart(expenses: _registeredExpenses),
+              Chart(expenses: expenses),
               // Text('The Chart'),
               Expanded(child: mainContent),
             ],
@@ -165,11 +130,11 @@ Widget mainContent = const Center(
             children: [
               
                   Expanded(
-                      child:Wallet(sum: sum),
+                      child:Wallet(),
                       ),
                       //Toolbar with the add button => Row()
                       Expanded(
-                        child: Chart(expenses: _registeredExpenses),
+                        child: Chart(expenses: expenses),
                       ),
                   // Text('The Chart'),
                   Expanded(child: mainContent),
